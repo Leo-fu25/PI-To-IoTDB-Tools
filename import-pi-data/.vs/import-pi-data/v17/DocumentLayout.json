@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\code\\C#\\PI\\PI-To-IoTDB-Tools\\import-pi-data\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{F7B2F7E9-A033-42A3-A4F2-DC271B3F4CAE}|import-pi-data.csproj|d:\\code\\c#\\pi\\pi-to-iotdb-tools\\import-pi-data\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F7B2F7E9-A033-42A3-A4F2-DC271B3F4CAE}|import-pi-data.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\code\\C#\\PI\\PI-To-IoTDB-Tools\\import-pi-data\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "D:\\code\\C#\\PI\\PI-To-IoTDB-Tools\\import-pi-data\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAHgAAAAAAAAAAAAiwCgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-13T09:38:02.054Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
