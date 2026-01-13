@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Apache.IoTDB;
+﻿using Apache.IoTDB;
 using Apache.IoTDB.DataStructure;
 using NLog.Filters;
 using PISDK;
@@ -14,31 +8,99 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 
-namespace impotr_pi_data
+namespace import_pi_data
 {
+    public class AppConfig
+    {
+        public PiServerConfig PiServer { get; set; }
+        public IoTDBConfig IoTDB { get; set; }
+        public DataRangeConfig DataRange { get; set; }
+        public PerformanceConfig Performance { get; set; }
+    }
+
+    public class PiServerConfig
+    {
+        public string Address { get; set; }
+    }
+
+    public class IoTDBConfig
+    {
+        public string Host { get; set; }
+        public int Port { get; set; }
+        public string User { get; set; }
+        public string Password { get; set; }
+        public string RootDevice { get; set; }
+    }
+
+    public class DataRangeConfig
+    {
+        public string StartTime { get; set; }
+        public string EndTime { get; set; }
+    }
+
+    public class PerformanceConfig
+    {
+        public int ParallelTaskCount { get; set; }
+        public int MaxRetry { get; set; }
+    }
+
     internal static class PiToIoTDB_StreamReadWrite
     {
-        // 核心配置
-        private static string piServerAddress = "RTDB";
-        private static string iotdbHost = "127.0.0.1";
-        private static int iotdbPort = 6667;
-        private static string iotdbUser = "root";
-        private static string iotdbPwd = "TimechoDB@2021";
-        private static string iotdbRootDevice = "root.pi.test";
-        private static int parallelTaskCount = Environment.ProcessorCount * 2;
-        private static int maxRetry = 2; // 失败重试次数
-        private static DateTime dataStartTime = new DateTime(2025, 10, 25, 0, 0, 0);
-        private static DateTime dataEndTime = new DateTime(2025, 10, 30, 0, 0, 0);
+        private static AppConfig _config;
+        private static string piServerAddress;
+        private static string iotdbHost;
+        private static int iotdbPort;
+        private static string iotdbUser;
+        private static string iotdbPwd;
+        private static string iotdbRootDevice;
+        private static int parallelTaskCount;
+        private static int maxRetry;
+        private static DateTime dataStartTime;
+        private static DateTime dataEndTime;
         private static bool stop = false;
         private static int valuesCnt = 0;
         private static int faileCnt = 0;
-        private static int totalValuesCnt = 0; // 总写入数据条数
+        private static int totalValuesCnt = 0;
 
+        static void LoadConfiguration()
+        {
+            try
+            {
+                string configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appsettings.json");
+                if (!File.Exists(configPath))
+                {
+                    configPath = "appsettings.json";
+                }
 
+                string json = File.ReadAllText(configPath);
+                var serializer = new JavaScriptSerializer();
+                _config = serializer.Deserialize<AppConfig>(json);
+
+                piServerAddress = _config.PiServer.Address;
+                iotdbHost = _config.IoTDB.Host;
+                iotdbPort = _config.IoTDB.Port;
+                iotdbUser = _config.IoTDB.User;
+                iotdbPwd = _config.IoTDB.Password;
+                iotdbRootDevice = _config.IoTDB.RootDevice;
+                dataStartTime = DateTime.Parse(_config.DataRange.StartTime);
+                dataEndTime = DateTime.Parse(_config.DataRange.EndTime);
+                parallelTaskCount = _config.Performance.ParallelTaskCount > 0 ? _config.Performance.ParallelTaskCount : Environment.ProcessorCount * 2;
+                maxRetry = _config.Performance.MaxRetry;
+
+                Console.WriteLine("配置加载成功");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"配置加载失败：{ex.Message}");
+                throw;
+            }
+        }
 
         // 复用PI连接（全局单例，避免重复创建）
         private static Server _piServer;
@@ -46,6 +108,8 @@ namespace impotr_pi_data
 
         static async Task Main(string[] args)
         {
+            LoadConfiguration();
+            
             var totalWatch = Stopwatch.StartNew();
             ConcurrentQueue<PiPointInfo> allPoints = new ConcurrentQueue<PiPointInfo>();
             try

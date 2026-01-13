@@ -54,3 +54,4 @@ D:\code\C#\PI\PI-To-IoTDB-Tools\import-pi-data\obj\Debug\import-pi-data.csproj.C
 D:\code\C#\PI\PI-To-IoTDB-Tools\import-pi-data\obj\Debug\import-p.10039B40.Up2Date
 D:\code\C#\PI\PI-To-IoTDB-Tools\import-pi-data\obj\Debug\import-pi-data.exe
 D:\code\C#\PI\PI-To-IoTDB-Tools\import-pi-data\obj\Debug\import-pi-data.pdb
+D:\code\C#\PI\PI-To-IoTDB-Tools\import-pi-data\bin\Debug\appsettings.json
