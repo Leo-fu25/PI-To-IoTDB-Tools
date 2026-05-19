@@ -44,18 +44,22 @@ namespace import_pi_data
             ConcurrentQueue<PiPointInfo> allPoints = new ConcurrentQueue<PiPointInfo>();
             try
             {
-                Console.WriteLine($"时间范围：{dataStartTime:yyyy-MM-dd HH:mm:ss} 至 {dataEndTime:yyyy-MM-dd HH:mm:ss}");
+                // 步骤0：点位迁移（先创建时序）
+                Console.WriteLine("\n===== 阶段1：PI点位迁移（创建IoTDB时序） =====");
+                await PiPointMigration.RunMigrationAsync();
 
                 // 步骤1：读取所有点位元数据（仅读元数据，不读历史数据，内存占用低）
+                Console.WriteLine($"\n\n===== 阶段2：数据迁移 =====");
+                Console.WriteLine($"时间范围：{dataStartTime:yyyy-MM-dd HH:mm:ss} 至 {dataEndTime:yyyy-MM-dd HH:mm:ss}");
                 Console.WriteLine("\n----- 步骤1：读取点位元数据 -----");
                 Console.WriteLine($"开始时间{DateTime.Now.ToLocalTime()}");
-                Task.Run(async () =>
-                {
-                    ReadPointMetadata(allPoints);
-                });
+                
+                Task.Run(() => ReadPointMetadata(allPoints));
+                
                 // 步骤2：边读边写（核心逻辑）
                 Console.WriteLine("\n----- 步骤2：流式读写历史数据 -----");
                 await StreamProcess(allPoints);
+                
                 Console.WriteLine($"共读取{valuesCnt}条数据");
                 totalWatch.Stop();
                 Console.WriteLine($"\n===== 全部完成，总耗时：{totalWatch.Elapsed.TotalMinutes:F2}分钟 =====");

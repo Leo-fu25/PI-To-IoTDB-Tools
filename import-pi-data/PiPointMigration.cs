@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace pi_point_test01
+namespace import_pi_data
 {
     public static class PiPointMigration
     {
@@ -15,7 +15,7 @@ namespace pi_point_test01
         private static int iotdbPort = 6667;
         private static string iotdbUser = "root";
         private static string iotdbPwd = "TimechoDB@2021";
-        private static string iotdbRootDevice = "root.pi1.test";
+        private static string iotdbRootDevice = "root.pi.test";
         private static int batchSize = 1000;
 
         public static async Task RunMigrationAsync()
@@ -40,16 +40,15 @@ namespace pi_point_test01
 
                 DateTime end1 = DateTime.Now;
                 Console.WriteLine($"写入结束时间：{end1}");
-                Console.WriteLine("===== 时序创建完成 =====");
+                Console.WriteLine("===== 点位迁移完成 =====");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"执行失败：{ex.Message}");
+                Console.WriteLine($"点位迁移执行失败：{ex.Message}");
                 if (ex.InnerException != null)
                     Console.WriteLine($"内部错误：{ex.InnerException.Message}");
+                throw;
             }
-            Console.WriteLine("按任意键退出...");
-            Console.ReadKey();
         }
 
         static List<List<PiPointInfo>> GetPiPointMetadataBatches()
